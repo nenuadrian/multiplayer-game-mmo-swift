@@ -3,23 +3,47 @@ import Socket
 
 
 class WorldServerHandler : SocketHandler {
-  override func handlePacket(bytes: UnsafePointer<UInt8>) {
-    if bytes[0] == 1 {
-      print("CHARACTER LIST")
-      let charCount = bytes[1]
-      var offset = 2
-      for _ in 0...charCount-1 {
-        let id = Int.fromByteArray(bytes.splice(offset: offset, length: 8))
-        offset += 8
-        let name = bytes.getNSString(lengthOffsetPosition: offset)!
-        offset += Int(bytes[offset] + 1)
+  override init() {
+    super.init()
+    packetHandlers[1] = characterListPacket
+    packetHandlers[2] = joinedWorldPacket
+    packetHandlers[3] = charDataPacket
+    packetHandlers[4] = inventoryPacket
+  }
 
-        print("char \(id) \(name)")
-      }
-    } else if bytes[0] == 2 {
-      print("JOINED WORLD")
-    } else {
-      print("UNKNOWN PACKET TYPE")
+  func characterListPacket(_ bytes: UnsafePointer<UInt8>) {
+    print("CHARACTER LIST")
+    let count = bytes[0]
+    var offset = 1
+    for _ in 0...count-1 {
+      let id = Int.fromByteArray(bytes.splice(offset: offset, length: 8))
+      offset += 8
+      let name = bytes.getNSString(lengthOffsetPosition: offset)!
+      offset += Int(bytes[offset] + 1)
+
+      print("char \(id) \(name)")
+    }
+  }
+
+  func joinedWorldPacket(_ bytes: UnsafePointer<UInt8>) {
+    print("JOINED WORLD")
+  }
+
+  func charDataPacket(_ bytes: UnsafePointer<UInt8>) {
+    print("CHAR DATA")
+    let id = Int.fromByteArray(bytes.splice(offset: 0, length: 8))
+    let name = bytes.getNSString(lengthOffsetPosition: 8)!
+    print("char \(id) \(name)")
+  }
+
+  func inventoryPacket(_ bytes: UnsafePointer<UInt8>) {
+    print("INVENTORY DATA")
+    let count = bytes[0]
+    var offset = 1
+    for _ in 0...count-1 {
+      let id = UInt16.fromByteArray(bytes.splice(offset: offset, length: 2))
+      offset += 2
+      print("item \(id)")
     }
   }
 
@@ -32,5 +56,4 @@ class WorldServerHandler : SocketHandler {
     buff += char.toByteArray()
     send(type: 2, buff: buff)
   }
-
 }

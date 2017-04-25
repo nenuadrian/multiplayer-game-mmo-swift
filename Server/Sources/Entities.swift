@@ -7,3 +7,10 @@ class Character {
     self.name = name
   }
 }
+
+class Item {
+  let id: UInt16
+  init(id: UInt16) {
+    self.id = id
+  }
+}

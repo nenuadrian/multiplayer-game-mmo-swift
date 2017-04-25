@@ -26,7 +26,8 @@ class Server {
   }
 
   func processClient(socket: Socket) -> SocketHandler {
-    let client = SocketHandler(socket: socket)
+    let client = SocketHandler()
+    client.with(socket: socket)
     return client
   }
 

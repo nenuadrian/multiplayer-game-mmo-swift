@@ -1,6 +1,5 @@
 import Foundation
 
-
 public protocol ByteManipulations {}
 
 public extension ByteManipulations {
@@ -43,17 +42,14 @@ import Socket
 
 public class SocketHandler {
   var socket: Socket!
+  var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
 
-  init() { }
-
-  convenience init(socket: Socket) {
-    self.init()
+  func with(socket: Socket) {
     self.socket = socket
     self.listen()
   }
 
-  convenience init(port: Int32) {
-    self.init()
+  func with(port: Int32) {
     do {
       self.socket = try Socket.create()
       self.socket.readBufferSize = 32768
@@ -75,9 +71,7 @@ public class SocketHandler {
     let queue = DispatchQueue.global(qos: .default)
 
     queue.async { [unowned self, socket] in
-
         var shouldKeepRunning = true
-
         var readData = Data(capacity: 4096)
 
         do {
@@ -93,12 +87,15 @@ public class SocketHandler {
                         if length == 0 {
                           break
                         }
-                        let packet = bytes.splice(offset: offset + 2, length: Int(length))
-
+                        let packet = bytes.splice(offset: offset + 3, length: Int(length) - 1)
+                        let op = bytes[offset + 2]
+                        print("Packet of type \(op)")
                         print("Packet of length \(length)")
-                        print("Packet of type \(packet[0])")
-
-                        self.handlePacket(bytes: packet)
+                        if let handler = self.packetHandlers[op] {
+                          handler(packet)
+                        } else {
+                          print("Unknown packet op \(op)")
+                        }
                         offset += Int(length) + 2
                       } while bytesRead - offset >= 2
                     }
@@ -124,8 +121,6 @@ public class SocketHandler {
         }
     }
   }
-
-  func handlePacket(bytes: UnsafePointer<UInt8>) {}
 
   func close() {
     self.socket!.close()
