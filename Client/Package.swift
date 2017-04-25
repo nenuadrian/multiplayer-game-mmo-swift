@@ -1,10 +1,3 @@
-//
-//  Package.swift
-//  LoginServer
-//
-//  Created by Adrian Nenu on 24/04/2017.
-//  Copyright © 2017 Adrian Nenu. All rights reserved.
-//
 
 import PackageDescription
 

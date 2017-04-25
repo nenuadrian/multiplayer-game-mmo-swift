@@ -1,1 +1,1 @@
-.build/debug/LoginServer
+.build/debug/Server
