@@ -2,7 +2,6 @@ import Foundation
 import Socket
 import Dispatch
 
-
 class WorldServer : Server {
   override func processClient(socket: Socket) -> SocketHandler {
     let client = WorldServerClient(socket: socket)
