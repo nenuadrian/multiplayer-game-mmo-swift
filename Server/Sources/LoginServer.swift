@@ -2,7 +2,6 @@ import Foundation
 import Socket
 import Dispatch
 
-
 class LoginServer : Server {
   override func processClient(socket: Socket) -> SocketHandler {
     let client = LoginServerClient()
@@ -20,11 +19,11 @@ class LoginServerClient : SocketHandler {
   }
 
   func authPacket(_ bytes: UnsafePointer<UInt8>) {
-    print("AUTH")
+    Logger.debug("Packet: AUTH")
     let username = bytes.getNSString(lengthOffsetPosition: 0)!
     let pOffset = 1 + Int(bytes[1])
     let password = NSString(bytes: bytes + pOffset + 1, length: Int(bytes[pOffset]), encoding: String.Encoding.utf8.rawValue)!
-    print("\(username) - \(password)")
+    Logger.debug("Packet: \(username) - \(password)")
 
     var buff = [UInt8]()
     buff.append(1)
@@ -32,7 +31,7 @@ class LoginServerClient : SocketHandler {
   }
 
   func serverListPacket(_ bytes: UnsafePointer<UInt8>) {
-    print("SERVER LIST")
+    Logger.debug("Packet: SERVER LIST")
     let servers = [(1, "World 1".utf8, 1), (2, "World 2".utf8, 1)]
     var buff = [UInt8]()
     buff.append(UInt8(servers.count))
@@ -46,7 +45,7 @@ class LoginServerClient : SocketHandler {
   }
 
   func joinWorldPacket(_ bytes: UnsafePointer<UInt8>) {
-    print("JOIN SERVER")
+    Logger.debug("Packet: JOIN SERVER")
     var buff = [UInt8]()
     buff.append(UInt8(1))
     self.send(type: 3, buff: buff)

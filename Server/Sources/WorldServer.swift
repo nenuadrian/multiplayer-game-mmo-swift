@@ -3,6 +3,7 @@ import Socket
 import Dispatch
 
 class WorldServer : Server {
+
   override func processClient(socket: Socket) -> SocketHandler {
     let client = WorldServerClient()
     client.with(socket: socket)
@@ -19,8 +20,8 @@ class WorldServerClient : SocketHandler {
   }
 
   func charListPacket(_ bytes: UnsafePointer<UInt8>) {
-    print("CHARACTER LIST")
-    let chars = [Character(id: 1, name: "Char1"), Character(id: 2, name: "Char2")]
+    Logger.debug("Packet: CHARACTER LIST")
+    let chars = [Character(id: 1, name: "Char1", map: 1, x: 1, y: 1), Character(id: 2, name: "Char2", map: 1, x: 1, y: 1)]
     var buff = [UInt8]()
     buff.append(UInt8(chars.count))
     for char in chars {
@@ -32,13 +33,17 @@ class WorldServerClient : SocketHandler {
   }
 
   func enterWorldPacket(_ bytes: UnsafePointer<UInt8>) {
-    print("ENTER WORLD FROM CHAR SELECT")
+    Logger.debug("Packet: ENTER WORLD FROM CHAR SELECT")
     self.send(type: 2)
-    let char = Character(id: 1, name: "Char1")
+    let char = Character(id: 1, name: "Char1", map: 1, x: 100, y: 100)
     var charBuff = [UInt8]()
     charBuff += char.id.toByteArray()
     charBuff.append(UInt8(char.name.utf8.count))
     charBuff += char.name.utf8
+    charBuff.append(char.map)
+    charBuff += char.x.toByteArray()
+    charBuff += char.y.toByteArray()
+
     self.send(type: 3, buff: charBuff)
 
     var buff = [UInt8]()

@@ -5,14 +5,14 @@ public protocol ByteManipulations {}
 public extension ByteManipulations {
 
   func toByteArray() -> [UInt8] {
-      var value = self
-      return withUnsafeBytes(of: &value) { Array($0) }
+    var value = self
+    return withUnsafeBytes(of: &value) { Array($0) }
   }
 
   static func fromByteArray(_ value: [UInt8]) -> Self {
-      return value.withUnsafeBytes {
-          $0.baseAddress!.load(as: Self.self)
-      }
+    return value.withUnsafeBytes {
+        $0.baseAddress!.load(as: Self.self)
+    }
   }
 }
 
@@ -71,54 +71,49 @@ public class SocketHandler {
     let queue = DispatchQueue.global(qos: .default)
 
     queue.async { [unowned self, socket] in
-        var shouldKeepRunning = true
-        var readData = Data(capacity: 4096)
+      var shouldKeepRunning = true
+      var readData = Data(capacity: 4096)
 
-        do {
-            repeat {
-                let bytesRead = try socket!.read(into: &readData)
+      do {
+        repeat {
+          let bytesRead = try socket!.read(into: &readData)
 
-                if bytesRead > 0 {
-                    readData.withUnsafeBytes {(bytes: UnsafePointer<UInt8>)->Void in
-                      var offset = 0
-                      var length: UInt16 = 0
-                      repeat {
-                        length = UInt16.fromByteArray(bytes.splice(offset: offset, length: 2))
-                        if length == 0 {
-                          break
-                        }
-                        let packet = bytes.splice(offset: offset + 3, length: Int(length) - 1)
-                        let op = bytes[offset + 2]
-                        print("Packet of type \(op)")
-                        print("Packet of length \(length)")
-                        if let handler = self.packetHandlers[op] {
-                          handler(packet)
-                        } else {
-                          print("Unknown packet op \(op)")
-                        }
-                        offset += Int(length) + 2
-                      } while bytesRead - offset >= 2
-                    }
+          if bytesRead > 0 {
+            readData.withUnsafeBytes {(bytes: UnsafePointer<UInt8>)->Void in
+              var offset = 0
+              var length: UInt16 = 0
+              repeat {
+                length = UInt16.fromByteArray(bytes.splice(offset: offset, length: 2))
+                if length == 0 {
+                  break
                 }
-
-                if bytesRead == 0 {
-                    shouldKeepRunning = false
-                    break
+                let packet = bytes.splice(offset: offset + 3, length: Int(length) - 1)
+                let op = bytes[offset + 2]
+                if let handler = self.packetHandlers[op] {
+                  handler(packet)
                 }
-
-                readData.count = 0
-
-            } while shouldKeepRunning
-
-            print("Socket: \(self.socket.remoteHostname):\(self.socket.remotePort) closed...")
-
-        }
-        catch let error {
-            guard  error is Socket.Error else {
-                print("Unexpected error by connection at \(self.socket.remoteHostname):\(self.socket.remotePort)...")
-                return
+                offset += Int(length) + 2
+              } while bytesRead - offset >= 2
             }
+          }
+
+          if bytesRead == 0 {
+              shouldKeepRunning = false
+              break
+          }
+
+          readData.count = 0
+
+        } while shouldKeepRunning
+
+      print("Socket: \(self.socket.remoteHostname):\(self.socket.remotePort) closed...")
+      }
+      catch let error {
+        guard  error is Socket.Error else {
+            print("Unexpected error by connection at \(self.socket.remoteHostname):\(self.socket.remotePort)...")
+            return
         }
+      }
     }
   }
 

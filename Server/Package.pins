@@ -6,6 +6,12 @@
       "reason": null,
       "repositoryURL": "https://github.com/IBM-Swift/BlueSocket",
       "version": "0.12.45"
+    },
+    {
+      "package": "SwiftyBeaver",
+      "reason": null,
+      "repositoryURL": "https://github.com/SwiftyBeaver/SwiftyBeaver.git",
+      "version": "1.2.1"
     }
   ],
   "version": 1

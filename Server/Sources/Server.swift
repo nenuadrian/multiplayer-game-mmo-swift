@@ -7,15 +7,18 @@ class Server {
   var listenSocket: Socket? = nil
   var connectedSockets = [Int32: SocketHandler]()
   let socketLockQueue: DispatchQueue
+  let name: String
 
-  init(port: Int) {
+  init(name: String, port: Int) {
+    self.name = name
+    Logger.info("Starting server \(name) on port \(port)")
     socketLockQueue = DispatchQueue(label: "com.ibm.serverSwift.socketLockQueue\(port)")
     do {
       try self.listenSocket = Socket.create(family: .inet6)
       try listenSocket!.listen(on: port)
-      print("Listening.. ")
+      Logger.info("Listening for \(name)")
     } catch _ {
-      print("Unexpected error...")
+      Logger.error("Listening for \(name)")
     }
   }
 
@@ -38,17 +41,15 @@ class Server {
           do {
               repeat {
                   let newSocket = try self.listenSocket!.acceptClientConnection()
-                  print("Accepted connection from: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")
+                  Logger.debug("Accepted connection: \(newSocket.remoteHostname) on port \(newSocket.remotePort)")
                   self.addNewConnection(socket: newSocket)
               } while true
           }
           catch let error {
               guard error is Socket.Error else {
-                  print("Unexpected error...")
+                  Logger.error("Unexpected socket error...")
                   return
               }
-
-
           }
       }
   }

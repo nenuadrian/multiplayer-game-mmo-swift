@@ -41,9 +41,10 @@ class WorldServerHandler : SocketHandler {
     let count = bytes[0]
     var offset = 1
     for _ in 0...count-1 {
-      let id = UInt16.fromByteArray(bytes.splice(offset: offset, length: 2))
+      let item = PacketParser.item(bytes.splice(offset: offset, length: 2))
       offset += 2
-      print("item \(id)")
+
+      print("item \(item.id)")
     }
   }
 
