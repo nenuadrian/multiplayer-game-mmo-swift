@@ -5,18 +5,29 @@ import Dispatch
 class WorldServer : Server {
 
   override func processClient(socket: Socket) -> SocketHandler {
-    let client = WorldServerClient()
+    let client = WorldServerClient(worldServer: self)
     client.with(socket: socket)
     return client
+  }
+
+  func findClientsNearby(client: WorldServerClient) -> [WorldServerClient] {
+    return self.clients.map { $0.value as! WorldServerClient }.filter { $0.character != nil && $0.socket.socketfd != client.socket.socketfd }
   }
 }
 
 class WorldServerClient : SocketHandler {
+  let worldServer: WorldServer
+  var character: Character!
 
-  override init() {
+  init(worldServer: WorldServer) {
+    self.worldServer = worldServer
     super.init()
     packetHandlers[1] = charListPacket
     packetHandlers[2] = enterWorldPacket
+
+    packetHandlers[40] = startMovingPacket
+    packetHandlers[41] = movingPacket
+    packetHandlers[42] = endMovingPacket
   }
 
   func charListPacket(_ bytes: UnsafePointer<UInt8>) {
@@ -35,7 +46,9 @@ class WorldServerClient : SocketHandler {
   func enterWorldPacket(_ bytes: UnsafePointer<UInt8>) {
     Logger.debug("Packet: ENTER WORLD FROM CHAR SELECT")
     self.send(type: 2)
+    
     let char = Character(id: 1, name: "Char1", map: 1, x: 100, y: 100)
+    self.character = char
     var charBuff = [UInt8]()
     charBuff += char.id.toByteArray()
     charBuff.append(UInt8(char.name.utf8.count))
@@ -53,5 +66,38 @@ class WorldServerClient : SocketHandler {
       buff += item.id.toByteArray()
     }
     self.send(type: 4, buff: buff)
+  }
+
+  func startMovingPacket(_ bytes: UnsafePointer<UInt8>) {
+    Logger.debug("Packet: START MOVE")
+
+    let nearby = worldServer.findClientsNearby(client: self)
+    var buff = [UInt8]()
+    buff += character.id.toByteArray()
+    nearby.forEach { client in
+      client.send(type: 40, buff: buff)
+    }
+  }
+
+  func movingPacket(_ bytes: UnsafePointer<UInt8>) {
+    Logger.debug("Packet: MOVE")
+
+    let nearby = worldServer.findClientsNearby(client: self)
+    var buff = [UInt8]()
+    buff += character.id.toByteArray()
+    nearby.forEach { client in
+      client.send(type: 41, buff: buff)
+    }
+  }
+
+  func endMovingPacket(_ bytes: UnsafePointer<UInt8>) {
+    Logger.debug("Packet: END MOVE")
+
+    let nearby = worldServer.findClientsNearby(client: self)
+    var buff = [UInt8]()
+    buff += character.id.toByteArray()
+    nearby.forEach { client in
+      client.send(type: 42, buff: buff)
+    }
   }
 }

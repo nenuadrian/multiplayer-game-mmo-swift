@@ -2,7 +2,7 @@ import Foundation
 import Socket
 import CryptoSwift
 
-class LoginServerHandler : SocketHandler {
+class LoginServerPacketHandler : SocketHandler {
   override init() {
     super.init()
     packetHandlers[1] = authResultPacket
@@ -19,10 +19,10 @@ class LoginServerHandler : SocketHandler {
   func serverListPacket(_ bytes: UnsafePointer<UInt8>) {
     print("SERVER LIST RESULT")
     let serverListCount = bytes[0]
-    var servers: [(UInt8, NSString, UInt8)] = []
+    var servers: [(UInt8, String, UInt8)] = []
     var offset = 1
     for _ in 0...serverListCount-1 {
-      let name = bytes.getNSString(lengthOffsetPosition: offset + 1)
+      let name = bytes.getString(lengthOffsetPosition: offset + 1)
       servers.append((bytes[offset], name!, bytes[offset + 2 + Int(bytes[offset + 1])]))
       offset = offset + 2 + Int(bytes[offset + 1] + 1)
     }
@@ -32,6 +32,9 @@ class LoginServerHandler : SocketHandler {
   func joinWorldPacket(_ bytes: UnsafePointer<UInt8>) {
     print("CAN GO TO WORLD SERVER")
   }
+}
+
+class LoginServerHandler : LoginServerPacketHandler {
 
   func login(username: String, password: String) {
     let usernameU8 = username.utf8

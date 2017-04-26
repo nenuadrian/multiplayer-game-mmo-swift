@@ -5,31 +5,37 @@ public protocol ByteManipulations {}
 public extension ByteManipulations {
 
   func toByteArray() -> [UInt8] {
-    var value = self
-    return withUnsafeBytes(of: &value) { Array($0) }
+      var value = self
+      return withUnsafeBytes(of: &value) { Array($0) }
   }
 
   static func fromByteArray(_ value: [UInt8]) -> Self {
-    return value.withUnsafeBytes {
-        $0.baseAddress!.load(as: Self.self)
-    }
+      return value.withUnsafeBytes {
+          $0.baseAddress!.load(as: Self.self)
+      }
+  }
+
+  static func fromUnsafePointer(_ value: UnsafePointer<UInt8>) -> Self {
+      return self.fromByteArray(value.toArray(offset: 0, length: sizeOf()))
+  }
+
+  static func sizeOf() -> Int {
+    return MemoryLayout.size(ofValue: Self.self)
   }
 }
 
 /* Given a byte UInt8 array it considers given the offset, the first position to
   be the string byte length and then uses the bytes to build an NSString */
 public extension UnsafePointer where Pointee == UInt8 {
-  func getNSString(lengthOffsetPosition: Int) -> NSString? {
+  func getString(lengthOffsetPosition: Int) -> String? {
     let length = Int(self[lengthOffsetPosition])
-    let str = NSString(bytes: self + lengthOffsetPosition + 1, length: length, encoding: String.Encoding.utf8.rawValue)
+    let str = NSString(bytes: self + lengthOffsetPosition + 1, length: length, encoding: String.Encoding.utf8.rawValue) as String?
     return str
   }
 
-  func splice(offset: Int, length: Int) -> [UInt8] {
-    let msgData = NSData(bytes: self + offset, length: length)
-    var msgDataBytes = [UInt8](repeating: 0, count: msgData.length)
-    msgData.getBytes(&msgDataBytes, length: msgDataBytes.count)
-    return msgDataBytes
+  func toArray(offset: Int, length: Int) -> [UInt8] {
+    let buffer = UnsafeBufferPointer(start: self + offset, count: length);
+    return Array(buffer)
   }
 }
 
@@ -62,7 +68,7 @@ public class SocketHandler {
     do {
       let packetLength = UInt16(buff.count + 1)
       let packet = packetLength.toByteArray() + [type] + buff
-      print("Sending packet \(type) of size \(packetLength) \(packet.count)")
+      Logger.debug("Sending packet \(type) of size \(packetLength) \(packet.count)")
       try socket.write(from: packet, bufSize: packet.count)
     } catch _ { }
   }
@@ -71,49 +77,54 @@ public class SocketHandler {
     let queue = DispatchQueue.global(qos: .default)
 
     queue.async { [unowned self, socket] in
-      var shouldKeepRunning = true
-      var readData = Data(capacity: 4096)
+        var shouldKeepRunning = true
+        var readData = Data(capacity: 4096)
 
-      do {
-        repeat {
-          let bytesRead = try socket!.read(into: &readData)
+        do {
+            repeat {
+                let bytesRead = try socket!.read(into: &readData)
 
-          if bytesRead > 0 {
-            readData.withUnsafeBytes {(bytes: UnsafePointer<UInt8>)->Void in
-              var offset = 0
-              var length: UInt16 = 0
-              repeat {
-                length = UInt16.fromByteArray(bytes.splice(offset: offset, length: 2))
-                if length == 0 {
-                  break
+                if bytesRead > 0 {
+                    readData.withUnsafeBytes {(bytes: UnsafePointer<UInt8>)->Void in
+                      var offset = 0
+                      var length: UInt16 = 0
+                      repeat {
+                        length = UInt16.fromByteArray(bytes.toArray(offset: offset, length: 2))
+                        if length == 0 {
+                          break
+                        }
+                        let op = bytes[offset + 2]
+                        Logger.debug("Packet of type \(op)")
+                        Logger.debug("Packet of length \(length)")
+                        if let handler = self.packetHandlers[op] {
+                          let packet = bytes.toArray(offset: offset + 3, length: Int(length) - 1)
+                          handler(packet)
+                        } else {
+                          Logger.debug("Unknown packet op \(op)")
+                        }
+                        offset += Int(length) + 2
+                      } while bytesRead - offset >= 2
+                    }
                 }
-                let packet = bytes.splice(offset: offset + 3, length: Int(length) - 1)
-                let op = bytes[offset + 2]
-                if let handler = self.packetHandlers[op] {
-                  handler(packet)
+
+                if bytesRead == 0 {
+                    shouldKeepRunning = false
+                    break
                 }
-                offset += Int(length) + 2
-              } while bytesRead - offset >= 2
-            }
-          }
 
-          if bytesRead == 0 {
-              shouldKeepRunning = false
-              break
-          }
+                readData.count = 0
 
-          readData.count = 0
+            } while shouldKeepRunning
 
-        } while shouldKeepRunning
+            Logger.debug("Socket: \(self.socket.remoteHostname):\(self.socket.remotePort) closed...")
 
-      print("Socket: \(self.socket.remoteHostname):\(self.socket.remotePort) closed...")
-      }
-      catch let error {
-        guard  error is Socket.Error else {
-            print("Unexpected error by connection at \(self.socket.remoteHostname):\(self.socket.remotePort)...")
-            return
         }
-      }
+        catch let error {
+            guard  error is Socket.Error else {
+                Logger.debug("Unexpected error by connection at \(self.socket.remoteHostname):\(self.socket.remotePort)...")
+                return
+            }
+        }
     }
   }
 

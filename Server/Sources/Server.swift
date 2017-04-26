@@ -5,7 +5,7 @@ import Dispatch
 
 class Server {
   var listenSocket: Socket? = nil
-  var connectedSockets = [Int32: SocketHandler]()
+  var clients = [Int32: SocketHandler]()
   let socketLockQueue: DispatchQueue
   let name: String
 
@@ -24,7 +24,7 @@ class Server {
 
   func addNewConnection(socket: Socket) {
       socketLockQueue.sync { [unowned self, socket] in
-        self.connectedSockets[socket.socketfd] = self.processClient(socket: socket)
+        self.clients[socket.socketfd] = self.processClient(socket: socket)
       }
   }
 
