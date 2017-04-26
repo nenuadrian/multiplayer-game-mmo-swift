@@ -1,5 +1,6 @@
 import Foundation
 import Socket
+import CryptoSwift
 
 class LoginServerHandler : SocketHandler {
   override init() {
@@ -34,12 +35,13 @@ class LoginServerHandler : SocketHandler {
 
   func login(username: String, password: String) {
     let usernameU8 = username.utf8
-    let passwordU8 = password.utf8
+    let passwordU8 = Data(bytes: Array(password.utf8)).sha256()
     var buff = [UInt8]()
     buff.append(UInt8(usernameU8.count))
     buff += usernameU8
     buff.append(UInt8(passwordU8.count))
     buff += passwordU8
+    print(buff)
 
     send(type: 1, buff: buff)
   }

@@ -21,8 +21,8 @@ class LoginServerClient : SocketHandler {
   func authPacket(_ bytes: UnsafePointer<UInt8>) {
     Logger.debug("Packet: AUTH")
     let username = bytes.getNSString(lengthOffsetPosition: 0)!
-    let pOffset = 1 + Int(bytes[1])
-    let password = NSString(bytes: bytes + pOffset + 1, length: Int(bytes[pOffset]), encoding: String.Encoding.utf8.rawValue)!
+    let offset = Int(bytes[0]) + 1
+    let password = bytes.splice(offset: offset + 1, length: Int(bytes[offset]))
     Logger.debug("Packet: \(username) - \(password)")
 
     var buff = [UInt8]()
