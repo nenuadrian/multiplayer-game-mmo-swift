@@ -7,7 +7,7 @@ let package = Package(
     name: "Client",
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
-        .library(
+        .executable(
             name: "Client",
             targets: ["Client"]),
     ],
