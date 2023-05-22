@@ -1,15 +1,15 @@
 # multiplayer-game-mmo-swift
-A research experiment aiming to figure out the intricacies of MMO servers and clients &amp; Swift, using IBM BlueSocket library as a base for socket handling
+This research experiment focuses on investigating the complexities of MMO (Massively Multiplayer Online) servers and clients, specifically using the Swift programming language. The experiment utilizes the IBM BlueSocket library as the foundation for socket handling, which is crucial for establishing communication between the server and clients.
 
-
-Disclaimer: this of course does not aim to be production code for an MMO server and/or client
+It is important to note that this experiment is not intended to be used as production-ready code for an MMO server or client. Instead, its purpose is to explore and gain insights into the intricacies of MMO architecture and network communication within the Swift programming environment.
 
 # packet structure
-Every packet of UInt8 bytes starts with an UInt16 (2 UInt8 bytes) representing its length (excluding the length needed to store the UInt16).
 
-The next UInt8 after the 2 length bytes represents the code operation the packet represents, op code (type of packet).
+In the given protocol, each packet consists of a series of UInt8 bytes. The first two UInt8 bytes (UInt16) indicate the length of the packet, excluding the bytes required to store the length itself.
 
-Everything else (length - 1) is op specific.
+Following the length bytes, the next UInt8 byte represents the operation code (op code) that specifies the type of packet being transmitted.
+
+The remaining bytes in the packet, excluding the length byte, are specific to the operation being performed and can vary depending on the op code.
 
 # servers
 
