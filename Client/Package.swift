@@ -20,8 +20,8 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "Client"),
+        .executableTarget(
+            name: "Client", dependencies: [.package(url: "https://github.com/IBM-Swift/BlueSocket", from: "1.0.0")]),
         .testTarget(
             name: "ClientTests",
             dependencies: ["Client"]),
