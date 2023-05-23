@@ -10,6 +10,7 @@ let package = Package(
         .executable(
             name: "Client",
             targets: ["Client"]),
+            
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0"),
@@ -20,8 +21,12 @@ let package = Package(
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
-        .target(
-            name: "Client"),
+        .executableTarget(
+            name: "Client", dependencies: [
+                .product(name: "Socket", package: "BlueSocket"), 
+                .product(name: "SwiftyBeaver", package: "SwiftyBeaver"),
+                .product(name: "CryptoSwift", package: "CryptoSwift")
+            ]),
         .testTarget(
             name: "ClientTests",
             dependencies: ["Client"]),
