@@ -24,7 +24,8 @@ let package = Package(
         .executableTarget(
             name: "Client", dependencies: [
                 .product(name: "Socket", package: "BlueSocket"), 
-                .product(name: "SwiftyBeaver", package: "SwiftyBeaver")
+                .product(name: "SwiftyBeaver", package: "SwiftyBeaver"),
+                .product(name: "CryptoSwift", package: "CryptoSwift")
             ]),
         .testTarget(
             name: "ClientTests",
