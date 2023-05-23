@@ -3,25 +3,24 @@ import Foundation
 public protocol ByteManipulations {}
 
 public extension ByteManipulations {
+    func toByteArray() -> [UInt8] {
+        var value = self
+        return withUnsafeBytes(of: &value) { Array($0) }
+    }
 
-  func toByteArray() -> [UInt8] {
-      var value = self
-      return withUnsafeBytes(of: &value) { Array($0) }
-  }
+    static func fromByteArray(_ value: [UInt8]) -> Self {
+        return value.withUnsafeBytes {
+            $0.baseAddress!.load(as: Self.self)
+        }
+    }
 
-  static func fromByteArray(_ value: [UInt8]) -> Self {
-      return value.withUnsafeBytes {
-          $0.baseAddress!.load(as: Self.self)
-      }
-  }
+    static func fromUnsafePointer(_ value: UnsafePointer<UInt8>) -> Self {
+        return fromByteArray(value.toArray(offset: 0, length: sizeOf()))
+    }
 
-  static func fromUnsafePointer(_ value: UnsafePointer<UInt8>) -> Self {
-      return self.fromByteArray(value.toArray(offset: 0, length: sizeOf()))
-  }
-
-  static func sizeOf() -> Int {
-    return MemoryLayout.size(ofValue: Self.self)
-  }
+    static func sizeOf() -> Int {
+        return MemoryLayout<Self>.size
+    }
 }
 
 /* Given a byte UInt8 array it considers given the offset, the first position to
