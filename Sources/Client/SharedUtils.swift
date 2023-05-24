@@ -4,7 +4,7 @@ public protocol ByteManipulations {}
 
 public extension ByteManipulations {
     func toByteArray() -> [UInt8] {
-        var value = self
+        var value: Self = self
         return withUnsafeBytes(of: &value) { Array($0) }
     }
 
@@ -95,7 +95,7 @@ public class SocketHandler {
                         let op = bytes[offset + 2]
                         Logger.debug("Packet of type \(op)")
                         Logger.debug("Packet of length \(length)")
-                        if let handler = self.packetHandlers[op] {
+                        if let handler: (UnsafePointer<UInt8>) -> Void = self.packetHandlers[op] {
                           let packet = bytes.toArray(offset: offset + 3, length: Int(length) - 1)
                           handler(packet)
                         } else {

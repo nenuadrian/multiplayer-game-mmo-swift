@@ -11,7 +11,7 @@ self.serverList()
 self.joinServer(server: 1)
 */
 
-let worldHandler = WorldServerHandler()
+let worldHandler: WorldServerHandler = WorldServerHandler()
 worldHandler.with(port: 38102)
 worldHandler.characterList()
 worldHandler.enterWorld(char: 1)

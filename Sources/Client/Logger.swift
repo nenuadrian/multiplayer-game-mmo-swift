@@ -1,9 +1,9 @@
 import SwiftyBeaver
 
 class Logger {
-  static let log = SwiftyBeaver.self
+  static let log: SwiftyBeaver.Type = SwiftyBeaver.self
   static func initiate() {
-    let console = ConsoleDestination()  // log to Xcode Console
+    let console: ConsoleDestination = ConsoleDestination()  // log to Xcode Console
     console.format = "[$C$L$c][$DHH:mm:ss$d] $M"
     log.addDestination(console)
   }
