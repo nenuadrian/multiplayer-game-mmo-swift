@@ -1,10 +1,10 @@
 import Foundation
 import Socket
 import CryptoSwift
+import Common
 
-class LoginServerPacketHandler : SocketHandler {
-  override init() {
-    super.init()
+class LoginServerPacketHandler : Common.SocketHandler {
+  init() {
     packetHandlers[1] = authResultPacket
     packetHandlers[2] = serverListPacket
     packetHandlers[3] = joinWorldPacket

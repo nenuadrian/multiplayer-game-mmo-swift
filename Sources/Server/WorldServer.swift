@@ -1,10 +1,11 @@
 import Foundation
 import Socket
 import Dispatch
+import Common
 
 class WorldServer : Server {
 
-  override func processClient(socket: Socket) -> SocketHandler {
+  override func processClient(socket: Socket) -> Common.SocketHandler {
     let client = WorldServerClient(worldServer: self)
     client.with(socket: socket)
     return client
@@ -15,13 +16,12 @@ class WorldServer : Server {
   }
 }
 
-class WorldServerClient : SocketHandler {
+class WorldServerClient : Common.SocketHandler {
   let worldServer: WorldServer
   var character: Character!
 
   init(worldServer: WorldServer) {
     self.worldServer = worldServer
-    super.init()
     packetHandlers[1] = charListPacket
     packetHandlers[2] = enterWorldPacket
 
@@ -31,7 +31,7 @@ class WorldServerClient : SocketHandler {
   }
 
   func charListPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: CHARACTER LIST")
+    Common.Logger.debug("Packet: CHARACTER LIST")
     let chars = [Character(id: 1, name: "Char1", map: 1, x: 1, y: 1), Character(id: 2, name: "Char2", map: 1, x: 1, y: 1)]
     var buff = [UInt8]()
     buff.append(UInt8(chars.count))
@@ -44,7 +44,7 @@ class WorldServerClient : SocketHandler {
   }
 
   func enterWorldPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: ENTER WORLD FROM CHAR SELECT")
+    Common.Logger.debug("Packet: ENTER WORLD FROM CHAR SELECT")
     self.send(type: 2)
     
     let char = Character(id: 1, name: "Char1", map: 1, x: 100, y: 100)
@@ -69,7 +69,7 @@ class WorldServerClient : SocketHandler {
   }
 
   func startMovingPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: START MOVE")
+    Common.Logger.debug("Packet: START MOVE")
 
     let nearby = worldServer.findClientsNearby(client: self)
     var buff = [UInt8]()
@@ -80,7 +80,7 @@ class WorldServerClient : SocketHandler {
   }
 
   func movingPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: MOVE")
+    Common.Logger.debug("Packet: MOVE")
 
     let nearby = worldServer.findClientsNearby(client: self)
     var buff = [UInt8]()
@@ -91,7 +91,7 @@ class WorldServerClient : SocketHandler {
   }
 
   func endMovingPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: END MOVE")
+    Common.Logger.debug("Packet: END MOVE")
 
     let nearby = worldServer.findClientsNearby(client: self)
     var buff = [UInt8]()

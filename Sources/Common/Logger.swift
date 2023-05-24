@@ -1,30 +1,30 @@
 import SwiftyBeaver
 
-class Logger {
+public class Logger {
   static let log: SwiftyBeaver.Type = SwiftyBeaver.self
-  static func initiate() {
+  public static func initiate() {
     let console: ConsoleDestination = ConsoleDestination()  // log to Xcode Console
     console.format = "[$C$L$c][$DHH:mm:ss$d] $M"
     log.addDestination(console)
   }
 
-  static func verbose(_ data: Any) {
+  public static func verbose(_ data: Any) {
     log.verbose(data)
   }
 
-  static func debug(_ data: Any) {
+  public  static func debug(_ data: Any) {
     log.debug(data)
   }
 
-  static func info(_ data: Any) {
+  public static func info(_ data: Any) {
     log.info(data)
   }
 
-  static func warning(_ data: Any) {
+  public static func warning(_ data: Any) {
     log.warning(data)
   }
 
-  static func error(_ data: Any) {
+  public static func error(_ data: Any) {
     log.error(data)
   }
 }

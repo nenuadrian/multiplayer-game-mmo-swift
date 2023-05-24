@@ -1,10 +1,9 @@
 import Foundation
 import Socket
+import Common
 
-
-class WorldServerPacketHandler : SocketHandler {
+class WorldServerPacketHandler : Common.SocketHandler {
   override init() {
-    super.init()
     packetHandlers[1] = characterListPacket
     packetHandlers[2] = joinedWorldPacket
     packetHandlers[3] = charDataPacket

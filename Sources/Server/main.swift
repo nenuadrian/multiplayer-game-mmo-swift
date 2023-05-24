@@ -1,5 +1,7 @@
 
-Logger.initiate()
+import Common
+
+Common.Logger.initiate()
 
 let server = LoginServer(name: "Login Server", port: 38101)
 server.run()

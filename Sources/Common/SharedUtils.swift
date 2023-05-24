@@ -1,27 +1,28 @@
 import Foundation
+import Foundation
+import Socket
 
 public protocol ByteManipulations {}
 
 public extension ByteManipulations {
+    func toByteArray() -> [UInt8] {
+        var value: Self = self
+        return withUnsafeBytes(of: &value) { Array($0) }
+    }
 
-  func toByteArray() -> [UInt8] {
-      var value = self
-      return withUnsafeBytes(of: &value) { Array($0) }
-  }
+    static func fromByteArray(_ value: [UInt8]) -> Self {
+        return value.withUnsafeBytes {
+            $0.baseAddress!.load(as: Self.self)
+        }
+    }
 
-  static func fromByteArray(_ value: [UInt8]) -> Self {
-      return value.withUnsafeBytes {
-          $0.baseAddress!.load(as: Self.self)
-      }
-  }
+    static func fromUnsafePointer(_ value: UnsafePointer<UInt8>) -> Self {
+        return fromByteArray(value.toArray(offset: 0, length: sizeOf()))
+    }
 
-  static func fromUnsafePointer(_ value: UnsafePointer<UInt8>) -> Self {
-      return self.fromByteArray(value.toArray(offset: 0, length: sizeOf()))
-  }
-
-  static func sizeOf() -> Int {
-    return MemoryLayout.size(ofValue: Self.self)
-  }
+    static func sizeOf() -> Int {
+        return MemoryLayout<Self>.size
+    }
 }
 
 /* Given a byte UInt8 array it considers given the offset, the first position to
@@ -43,19 +44,16 @@ extension UInt16 : ByteManipulations {}
 extension Int : ByteManipulations {}
 
 
-import Foundation
-import Socket
-
-public class SocketHandler {
+open class SocketHandler {
   var socket: Socket!
-  var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
+  public var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
 
-  func with(socket: Socket) {
+  public func with(socket: Socket) {
     self.socket = socket
     self.listen()
   }
 
-  func with(port: Int32) {
+  public func with(port: Int32) {
     do {
       self.socket = try Socket.create()
       self.socket.readBufferSize = 32768
@@ -64,7 +62,7 @@ public class SocketHandler {
     } catch _ { }
   }
 
-  func send(type: UInt8, buff: [UInt8] = [UInt8]()) {
+  public func send(type: UInt8, buff: [UInt8] = [UInt8]()) {
     do {
       let packetLength = UInt16(buff.count + 1)
       let packet = packetLength.toByteArray() + [type] + buff
@@ -73,7 +71,7 @@ public class SocketHandler {
     } catch _ { }
   }
 
-  func listen() {
+  public func listen() {
     let queue = DispatchQueue.global(qos: .default)
 
     queue.async { [unowned self, socket] in
@@ -96,7 +94,7 @@ public class SocketHandler {
                         let op = bytes[offset + 2]
                         Logger.debug("Packet of type \(op)")
                         Logger.debug("Packet of length \(length)")
-                        if let handler = self.packetHandlers[op] {
+                        if let handler: (UnsafePointer<UInt8>) -> Void = self.packetHandlers[op] {
                           let packet = bytes.toArray(offset: offset + 3, length: Int(length) - 1)
                           handler(packet)
                         } else {
@@ -128,7 +126,7 @@ public class SocketHandler {
     }
   }
 
-  func close() {
+  public func close() {
     self.socket!.close()
     /*  self.socketLockQueue.sync { [unowned self, self.socket] in
           self.connectedSockets[socket.socketfd] = nil
