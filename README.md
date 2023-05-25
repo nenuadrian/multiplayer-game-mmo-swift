@@ -11,7 +11,17 @@ Following the length bytes, the next UInt8 byte represents the operation code (o
 
 The remaining bytes in the packet, excluding the length byte, are specific to the operation being performed and can vary depending on the op code.
 
+# test
+
+```
+./test.sh
+```
+
 # servers
+```
+./build.sh
+.build/debug/Server
+```
 
 ## Login Server
 
@@ -20,3 +30,8 @@ The remaining bytes in the packet, excluding the length byte, are specific to th
 
 
 # client
+
+```
+./build.sh
+.build/debug/Client
+```
