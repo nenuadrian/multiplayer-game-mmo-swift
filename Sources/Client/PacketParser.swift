@@ -1,4 +1,5 @@
 import Foundation
+import Common
 
 class PacketParser {
   static func character(bytes: [UInt8]) -> Character {

@@ -24,12 +24,12 @@ class WorldServerClient : Common.SocketHandler {
     self.worldServer = worldServer
 
     super.init()
-    packetHandlers[1] = charListPacket
-    packetHandlers[2] = enterWorldPacket
+    packetHandlers[Packets.CHAR_LIST_REQUEST] = charListPacket
+    packetHandlers[Packets.JOIN_WORLD_REQUEST] = enterWorldPacket
 
-    packetHandlers[40] = startMovingPacket
-    packetHandlers[41] = movingPacket
-    packetHandlers[42] = endMovingPacket
+    packetHandlers[Packets.START_MOVING_REQUEST] = startMovingPacket
+    packetHandlers[Packets.MOVING_REQUEST] = movingPacket
+    packetHandlers[Packets.END_MOVING_REQUEST] = endMovingPacket
   }
 
   func charListPacket(_ bytes: UnsafePointer<UInt8>) {
@@ -42,12 +42,12 @@ class WorldServerClient : Common.SocketHandler {
       buff.append(UInt8(char.name.utf8.count))
       buff += char.name.utf8
     }
-    self.send(type: 1, buff: buff)
+    self.send(type: Packets.CHAR_LIST_RESPONSE, buff: buff)
   }
 
   func enterWorldPacket(_ bytes: UnsafePointer<UInt8>) {
     Common.Logger.debug("Packet: ENTER WORLD FROM CHAR SELECT")
-    self.send(type: 2)
+    self.send(type: Packets.JOIN_WORLD_RESPONSE)
     
     let char = Character(id: 1, name: "Char1", map: 1, x: 100, y: 100)
     self.character = char
@@ -59,7 +59,7 @@ class WorldServerClient : Common.SocketHandler {
     charBuff += char.x.toByteArray()
     charBuff += char.y.toByteArray()
 
-    self.send(type: 3, buff: charBuff)
+    self.send(type: Packets.CHAR_DATA_RESPONSE, buff: charBuff)
 
     var buff = [UInt8]()
     let inventory = [Item(id: 1), Item(id: 2)]
@@ -67,7 +67,7 @@ class WorldServerClient : Common.SocketHandler {
     for item in inventory {
       buff += item.id.toByteArray()
     }
-    self.send(type: 4, buff: buff)
+    self.send(type: Packets.INVENTORY_RESPONSE, buff: buff)
   }
 
   func startMovingPacket(_ bytes: UnsafePointer<UInt8>) {
@@ -77,7 +77,7 @@ class WorldServerClient : Common.SocketHandler {
     var buff = [UInt8]()
     buff += character.id.toByteArray()
     nearby.forEach { client in
-      client.send(type: 40, buff: buff)
+      client.send(type: Packets.START_MOVING_RESPONSE, buff: buff)
     }
   }
 
@@ -88,7 +88,7 @@ class WorldServerClient : Common.SocketHandler {
     var buff = [UInt8]()
     buff += character.id.toByteArray()
     nearby.forEach { client in
-      client.send(type: 41, buff: buff)
+      client.send(type: Packets.MOVING_RESPONSE, buff: buff)
     }
   }
 
@@ -99,7 +99,7 @@ class WorldServerClient : Common.SocketHandler {
     var buff = [UInt8]()
     buff += character.id.toByteArray()
     nearby.forEach { client in
-      client.send(type: 42, buff: buff)
+      client.send(type: Packets.END_MOVING_RESPONSE, buff: buff)
     }
   }
 }

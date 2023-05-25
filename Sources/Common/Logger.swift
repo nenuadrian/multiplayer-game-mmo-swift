@@ -12,7 +12,7 @@ public class Logger {
     log.verbose(data)
   }
 
-  public  static func debug(_ data: Any) {
+  public static func debug(_ data: Any) {
     log.debug(data)
   }
 

@@ -1,26 +1,26 @@
+import Common
 import Foundation
 import Socket
-import Common
 
-class WorldServerPacketHandler : Common.SocketHandler {
+class WorldServerPacketHandler: Common.SocketHandler {
   override init() {
     super.init()
-    packetHandlers[1] = characterListPacket
-    packetHandlers[2] = joinedWorldPacket
-    packetHandlers[3] = charDataPacket
-    packetHandlers[4] = inventoryPacket
+    packetHandlers[Packets.CHAR_LIST_RESPONSE] = characterListPacket
+    packetHandlers[Packets.JOIN_WORLD_RESPONSE] = joinedWorldPacket
+    packetHandlers[Packets.CHAR_DATA_RESPONSE] = charDataPacket
+    packetHandlers[Packets.INVENTORY_RESPONSE] = inventoryPacket
 
-    packetHandlers[40] = charStartMovingPacket
-    packetHandlers[41] = charMovingPacket
-    packetHandlers[42] = charEndMovingPacket
+    packetHandlers[Packets.START_MOVING_RESPONSE] = charStartMovingPacket
+    packetHandlers[Packets.MOVING_RESPONSE] = charMovingPacket
+    packetHandlers[Packets.END_MOVING_RESPONSE] = charEndMovingPacket
 
-    packetHandlers[43] = charsAroundPacket
+    packetHandlers[Packets.CHARS_AROUND_RESPONSE] = charsAroundPacket
   }
 
   func charsAroundPacket(_ bytes: UnsafePointer<UInt8>) {
     let count = UInt16.fromUnsafePointer(bytes)
     var offset = 1
-    for i in 0...count-1 {
+    for i in 0...count - 1 {
 
     }
   }
@@ -41,7 +41,7 @@ class WorldServerPacketHandler : Common.SocketHandler {
     print("CHARACTER LIST")
     let count = bytes[0]
     var offset = 1
-    for _ in 0...count-1 {
+    for _ in 0...count - 1 {
       let id = Int.fromUnsafePointer(bytes + offset)
       offset += 8
       let name = bytes.getString(lengthOffsetPosition: offset)!
@@ -67,7 +67,7 @@ class WorldServerPacketHandler : Common.SocketHandler {
     print("INVENTORY DATA")
     let count = bytes[0]
     var offset = 1
-    for _ in 0...count-1 {
+    for _ in 0...count - 1 {
       let item = PacketParser.item(bytes.toArray(offset: offset, length: 2))
       offset += 2
 
@@ -76,27 +76,27 @@ class WorldServerPacketHandler : Common.SocketHandler {
   }
 }
 
-class WorldServerHandler : WorldServerPacketHandler {
+class WorldServerHandler: WorldServerPacketHandler {
 
   func characterList() {
-    send(type: 1)
+    send(type: Packets.CHAR_LIST_REQUEST)
   }
 
   func enterWorld(char: Int) {
     var buff = [UInt8]()
     buff += char.toByteArray()
-    send(type: 2, buff: buff)
+    send(type: Packets.JOIN_WORLD_REQUEST, buff: buff)
   }
 
   func startMoving() {
-    send(type: 40)
+    send(type: Packets.START_MOVING_REQUEST)
   }
 
   func moveTo() {
-    send(type: 41)
+    send(type: Packets.MOVING_REQUEST)
   }
 
   func stopMoving() {
-    send(type: 42)
+    send(type: Packets.END_MOVING_REQUEST)
   }
 }
