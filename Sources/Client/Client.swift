@@ -2,25 +2,29 @@ import ArgumentParser
 import Common
 import Foundation
 import Socket
+import SwiftUI
 
+@available(macOS 11.0, *)
 @main
-struct Client: ParsableCommand {
-  @Argument(help: "Login Server port")
-  var loginServerPort = 38101
+struct Client: App {
 
-  @Argument(help: "World Server port")
-  var worldServerPort = 38102
+  var body: some Scene {
+    WindowGroup {
+      ContentView()
+    }
+  }
 
-  mutating func run() throws {
-    Common.Logger.initiate()
+}
 
-    /*
+/*
+ Common.Logger.initiate()
+
+
         let loginHandler = LoginServerHandler()
         loginHandler.with(port: loginServerPort)
         loginHandler.login(username: "test", password: "1234")
         self.serverList()
         self.joinServer(server: 1)
-        */
 
     let worldHandler: WorldServerHandler = WorldServerHandler()
     worldHandler.with(port: worldServerPort)
@@ -29,8 +33,7 @@ struct Client: ParsableCommand {
 
     worldHandler.startMoving()
     worldHandler.moveTo()
-    worldHandler.stopMoving()
+        
+worldHandler.stopMoving()
 
-    repeat {} while true
-  }
-}
+*/
