@@ -1,7 +1,1 @@
-cd Client
-
-./build.sh
-
-cd ../Server
-
-./build.sh
+swift build

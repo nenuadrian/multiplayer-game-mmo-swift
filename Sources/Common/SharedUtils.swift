@@ -1,10 +1,12 @@
 import Foundation
+import Foundation
+import Socket
 
 public protocol ByteManipulations {}
 
 public extension ByteManipulations {
     func toByteArray() -> [UInt8] {
-        var value = self
+        var value: Self = self
         return withUnsafeBytes(of: &value) { Array($0) }
     }
 
@@ -42,19 +44,20 @@ extension UInt16 : ByteManipulations {}
 extension Int : ByteManipulations {}
 
 
-import Foundation
-import Socket
+open class SocketHandler {
+  public var socket: Socket!
+  public var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
 
-public class SocketHandler {
-  var socket: Socket!
-  var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
+  public init() {
 
-  func with(socket: Socket) {
+  }
+
+  public func with(socket: Socket) {
     self.socket = socket
     self.listen()
   }
 
-  func with(port: Int32) {
+  public func with(port: Int32) {
     do {
       self.socket = try Socket.create()
       self.socket.readBufferSize = 32768
@@ -63,7 +66,7 @@ public class SocketHandler {
     } catch _ { }
   }
 
-  func send(type: UInt8, buff: [UInt8] = [UInt8]()) {
+  public func send(type: UInt8, buff: [UInt8] = [UInt8]()) {
     do {
       let packetLength = UInt16(buff.count + 1)
       let packet = packetLength.toByteArray() + [type] + buff
@@ -72,7 +75,7 @@ public class SocketHandler {
     } catch _ { }
   }
 
-  func listen() {
+  public func listen() {
     let queue = DispatchQueue.global(qos: .default)
 
     queue.async { [unowned self, socket] in
@@ -95,7 +98,7 @@ public class SocketHandler {
                         let op = bytes[offset + 2]
                         Logger.debug("Packet of type \(op)")
                         Logger.debug("Packet of length \(length)")
-                        if let handler = self.packetHandlers[op] {
+                        if let handler: (UnsafePointer<UInt8>) -> Void = self.packetHandlers[op] {
                           let packet = bytes.toArray(offset: offset + 3, length: Int(length) - 1)
                           handler(packet)
                         } else {
@@ -127,7 +130,7 @@ public class SocketHandler {
     }
   }
 
-  func close() {
+  public func close() {
     self.socket!.close()
     /*  self.socketLockQueue.sync { [unowned self, self.socket] in
           self.connectedSockets[socket.socketfd] = nil

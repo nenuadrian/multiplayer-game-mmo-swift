@@ -1,17 +1,18 @@
 import Foundation
 import Socket
 import Dispatch
+import Common
 
 class LoginServer : Server {
-  override func processClient(socket: Socket) -> SocketHandler {
+  override func processClient(socket: Socket) -> Common.SocketHandler {
     let client = LoginServerClient()
     client.with(socket: socket)
     return client
   }
 }
 
-class LoginServerClient : SocketHandler {
-  override init() {
+class LoginServerClient : Common.SocketHandler {
+   override init() {
     super.init()
     packetHandlers[1] = authPacket
     packetHandlers[2] = serverListPacket
@@ -19,11 +20,11 @@ class LoginServerClient : SocketHandler {
   }
 
   func authPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: AUTH")
+    Common.Logger.debug("Packet: AUTH")
     let username = bytes.getString(lengthOffsetPosition: 0)!
     let offset = Int(bytes[0]) + 1
     let password = bytes.toArray(offset: offset + 1, length: Int(bytes[offset]))
-    Logger.debug("Packet: \(username) - \(password)")
+    Common.Logger.debug("Packet: \(username) - \(password)")
 
     var buff = [UInt8]()
     buff.append(1)
@@ -31,7 +32,7 @@ class LoginServerClient : SocketHandler {
   }
 
   func serverListPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: SERVER LIST")
+    Common.Logger.debug("Packet: SERVER LIST")
     let servers = [(1, "World 1".utf8, 1), (2, "World 2".utf8, 1)]
     var buff = [UInt8]()
     buff.append(UInt8(servers.count))
@@ -45,7 +46,7 @@ class LoginServerClient : SocketHandler {
   }
 
   func joinWorldPacket(_ bytes: UnsafePointer<UInt8>) {
-    Logger.debug("Packet: JOIN SERVER")
+    Common.Logger.debug("Packet: JOIN SERVER")
     var buff = [UInt8]()
     buff.append(UInt8(1))
     self.send(type: 3, buff: buff)

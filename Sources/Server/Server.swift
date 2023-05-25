@@ -1,11 +1,11 @@
 import Foundation
 import Socket
 import Dispatch
-
+import Common
 
 class Server {
   var listenSocket: Socket? = nil
-  var clients = [Int32: SocketHandler]()
+  var clients = [Int32: Common.SocketHandler]()
   let socketLockQueue: DispatchQueue
   let name: String
 
@@ -28,8 +28,8 @@ class Server {
       }
   }
 
-  func processClient(socket: Socket) -> SocketHandler {
-    let client = SocketHandler()
+  func processClient(socket: Socket) -> Common.SocketHandler {
+    let client = Common.SocketHandler()
     client.with(socket: socket)
     return client
   }
