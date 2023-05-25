@@ -4,6 +4,7 @@ import Common
 
 class WorldServerPacketHandler : Common.SocketHandler {
   override init() {
+    super.init()
     packetHandlers[1] = characterListPacket
     packetHandlers[2] = joinedWorldPacket
     packetHandlers[3] = charDataPacket

@@ -22,6 +22,8 @@ class WorldServerClient : Common.SocketHandler {
 
   init(worldServer: WorldServer) {
     self.worldServer = worldServer
+
+    super.init()
     packetHandlers[1] = charListPacket
     packetHandlers[2] = enterWorldPacket
 

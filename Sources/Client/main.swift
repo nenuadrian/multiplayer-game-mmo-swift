@@ -1,7 +1,8 @@
 import Foundation
 import Socket
+import Common
 
-Logger.initiate()
+Common.Logger.initiate()
 
 /*
 let loginHandler = LoginServerHandler()

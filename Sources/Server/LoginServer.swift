@@ -12,7 +12,8 @@ class LoginServer : Server {
 }
 
 class LoginServerClient : Common.SocketHandler {
-   init() {
+   override init() {
+    super.init()
     packetHandlers[1] = authPacket
     packetHandlers[2] = serverListPacket
     packetHandlers[3] = joinWorldPacket

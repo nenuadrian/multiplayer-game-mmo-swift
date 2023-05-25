@@ -45,8 +45,12 @@ extension Int : ByteManipulations {}
 
 
 open class SocketHandler {
-  var socket: Socket!
+  public var socket: Socket!
   public var packetHandlers: [UInt8 : (_: UnsafePointer<UInt8>) -> Void] = [:]
+
+  public init() {
+
+  }
 
   public func with(socket: Socket) {
     self.socket = socket
