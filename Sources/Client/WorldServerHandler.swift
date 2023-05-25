@@ -19,7 +19,7 @@ class WorldServerPacketHandler: Common.SocketHandler {
 
   func charsAroundPacket(_ bytes: UnsafePointer<UInt8>) {
     let count = UInt16.fromUnsafePointer(bytes)
-    var offset = 1
+    var offset: Int = 1
     for i in 0...count - 1 {
 
     }
@@ -39,16 +39,16 @@ class WorldServerPacketHandler: Common.SocketHandler {
 
   func characterListPacket(_ bytes: UnsafePointer<UInt8>) {
     print("CHARACTER LIST")
-    let count = bytes[0]
-    var offset = 1
+    let count: UInt8 = bytes[0]
+    var offset: Int = 1
     for _ in 0...count - 1 {
-      let id = Int.fromUnsafePointer(bytes + offset)
+      let id: Int = Int.fromUnsafePointer(bytes + offset)
       offset += 8
-      let name = bytes.getString(lengthOffsetPosition: offset)!
+      let name: String = bytes.getString(lengthOffsetPosition: offset)!
       offset += Int(bytes[offset] + 1)
 
-      let char = Character(id: id, name: name, map: 1, x: 1, y: 1)
-      print("char \(id) \(name)")
+      let char: Character = Character(id: id, name: name, map: 1, x: 1, y: 1)
+      print("char \(id) \(char.name)")
     }
   }
 
