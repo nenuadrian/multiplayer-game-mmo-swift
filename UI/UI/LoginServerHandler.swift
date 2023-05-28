@@ -3,7 +3,7 @@ import CryptoSwift
 import Foundation
 import Socket
 
-class LoginServerPacketHandler: Common.SocketHandler {
+class LoginServerPacketHandler: SocketHandler {
   override init() {
     super.init()
     packetHandlers[Packets.LOGIN_RESPONSE] = authResultPacket

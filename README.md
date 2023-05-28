@@ -29,9 +29,8 @@ The remaining bytes in the packet, excluding the length byte, are specific to th
 ## World Server
 
 
-# client
+# Client Test Game - Metal 
 
 ```
-./build.sh
-.build/debug/Client
+xcodebuild test -project UI.xcodeproj -scheme UI
 ```
