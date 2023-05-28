@@ -10,37 +10,18 @@ import MetalKit
 import Common
 
 
-/*
- Common.Logger.initiate()
-
-
-        let loginHandler = LoginServerHandler()
-        loginHandler.with(port: loginServerPort)
-        loginHandler.login(username: "test", password: "1234")
-        self.serverList()
-        self.joinServer(server: 1)
-
-    let worldHandler: WorldServerHandler = WorldServerHandler()
-    worldHandler.with(port: worldServerPort)
-    worldHandler.characterList()
-    worldHandler.enterWorld(char: 1)
-
-    worldHandler.startMoving()
-    worldHandler.moveTo()
-
-worldHandler.stopMoving()
-
-*/
-
-
 // Our macOS specific view controller
 class GameViewController: NSViewController {
 
     var renderer: Renderer!
     var mtkView: MTKView!
-
+    let loginHandler = LoginServerHandler()
+    let worldHandler: WorldServerHandler = WorldServerHandler()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        loginHandler.with(port: 38101)
+        worldHandler.with(port: 38102)
 
         guard let mtkView = self.view as? MTKView else {
             print("View attached to GameViewController is not an MTKView")
@@ -65,5 +46,24 @@ class GameViewController: NSViewController {
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
         mtkView.delegate = renderer
+    }
+    
+    @IBAction func printHello(sender: AnyObject) {
+        Common.Logger.initiate()
+
+        
+        loginHandler.login(username: "test", password: "1234")
+        loginHandler.serverList()
+        loginHandler.joinServer(server: 1)
+
+        
+        worldHandler.characterList()
+        worldHandler.enterWorld(char: 1)
+
+        worldHandler.startMoving()
+        worldHandler.moveTo()
+
+        worldHandler.stopMoving()
+        
     }
 }
