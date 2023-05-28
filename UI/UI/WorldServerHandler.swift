@@ -2,7 +2,7 @@ import Common
 import Foundation
 import Socket
 
-class WorldServerPacketHandler: Common.SocketHandler {
+class WorldServerPacketHandler: SocketHandler {
   override init() {
     super.init()
     packetHandlers[Packets.CHAR_LIST_RESPONSE] = characterListPacket

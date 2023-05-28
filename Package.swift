@@ -4,23 +4,23 @@
 import PackageDescription
 
 let package = Package(
-  name: "Server",
+  name: "mmo",
+  platforms: [
+    .macOS(.v10_15)
+  ],
   products: [
     // Products define the executables and libraries a package produces, making them visible to other packages.
     .executable(
       name: "Server",
       targets: ["Server"]),
-    .executable(
-      name: "Client",
-      targets: ["Client"]),
     .library(
       name: "Common",
       targets: ["Common"]),
   ],
   dependencies: [
     .package(url: "https://github.com/apple/swift-argument-parser", from: "1.2.0"),
-    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "0.0.1"),
-    .package(url: "https://github.com/IBM-Swift/BlueSocket", from: "1.0.0"),
+    .package(url: "https://github.com/krzyzanowskim/CryptoSwift.git", from: "1.0.0"),
+    .package(url: "https://github.com/IBM-Swift/BlueSocket", from: "2.0.0"),
     .package(
       url: "https://github.com/SwiftyBeaver/SwiftyBeaver.git", .upToNextMajor(from: "2.0.0")),
   ],
@@ -44,15 +44,5 @@ let package = Package(
     .testTarget(
       name: "ServerTests",
       dependencies: ["Server"]),
-    .executableTarget(
-      name: "Client",
-      dependencies: [
-        "Common",
-        .product(name: "ArgumentParser", package: "swift-argument-parser"),
-        .product(name: "CryptoSwift", package: "CryptoSwift"),
-      ]),
-    .testTarget(
-      name: "ClientTests",
-      dependencies: ["Client"]),
   ]
 )

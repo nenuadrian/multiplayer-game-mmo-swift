@@ -1,7 +1,7 @@
 import XCTest
-@testable import Server
+@testable import Common
 
-final class ServerTests: XCTestCase {
+final class CommonTests: XCTestCase {
     func testExample() throws {
         // XCTest Documenation
         // https://developer.apple.com/documentation/xctest
