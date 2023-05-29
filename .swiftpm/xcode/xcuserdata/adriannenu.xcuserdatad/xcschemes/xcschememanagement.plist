@@ -4,84 +4,20 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>Client.xcscheme_^#shared#^_</key>
-		<dict>
-			<key>orderHint</key>
-			<integer>2</integer>
-		</dict>
 		<key>Common.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
-		</dict>
-		<key>CryptoSwift (Playground) 1.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>5</integer>
-		</dict>
-		<key>CryptoSwift (Playground) 2.xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>6</integer>
-		</dict>
-		<key>CryptoSwift (Playground).xcscheme</key>
-		<dict>
-			<key>isShown</key>
-			<false/>
-			<key>orderHint</key>
-			<integer>4</integer>
+			<integer>2</integer>
 		</dict>
 		<key>Server.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>3</integer>
 		</dict>
-		<key>mmo-Package.xcscheme_^#shared#^_</key>
+		<key>multiplayer-game-mmo-swift-Package.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>0</integer>
-		</dict>
-	</dict>
-	<key>SuppressBuildableAutocreation</key>
-	<dict>
-		<key>Client</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>ClientTests</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>Common</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>CommonTests</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>Server</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>ServerTests</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>mmo</key>
-		<dict>
-			<key>primary</key>
-			<true/>
 		</dict>
 	</dict>
 </dict>
