@@ -1,1 +1,3 @@
+cd server
+
 swift build

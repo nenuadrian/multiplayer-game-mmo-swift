@@ -1,2 +1,3 @@
-swift test
+cd server
 
+swift test
