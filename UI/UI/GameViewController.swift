@@ -15,12 +15,10 @@ class GameViewController: NSViewController {
 
     var renderer: Renderer!
     var mtkView: MTKView!
-    let loginHandler = LoginServerHandler()
     let worldHandler: WorldServerHandler = WorldServerHandler()
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        loginHandler.with(port: 38101)
         worldHandler.with(port: 38102)
 
         guard let mtkView = self.view as? MTKView else {
@@ -48,22 +46,5 @@ class GameViewController: NSViewController {
         mtkView.delegate = renderer
     }
     
-    @IBAction func printHello(sender: AnyObject) {
-        Common.Logger.initiate()
 
-        
-        loginHandler.login(username: "test", password: "1234")
-        loginHandler.serverList()
-        loginHandler.joinServer(server: 1)
-
-        
-        worldHandler.characterList()
-        worldHandler.enterWorld(char: 1)
-
-        worldHandler.startMoving()
-        worldHandler.moveTo()
-
-        worldHandler.stopMoving()
-        
-    }
 }

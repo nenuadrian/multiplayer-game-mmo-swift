@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D6059F842A248ABA00095D84 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6059F832A248ABA00095D84 /* LoginViewController.swift */; };
 		D6B151A22A23C1060071464A /* LoginServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B151A12A23C1060071464A /* LoginServerHandler.swift */; };
 		D6B151A42A23C11A0071464A /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B151A32A23C11A0071464A /* PacketParser.swift */; };
 		D6B151A62A23C1380071464A /* WorldServerHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6B151A52A23C1380071464A /* WorldServerHandler.swift */; };
@@ -43,6 +44,7 @@
 
 /* Begin PBXFileReference section */
 		D6059F822A24893A00095D84 /* server */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = server; path = ../server; sourceTree = "<group>"; };
+		D6059F832A248ABA00095D84 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		D6B151A12A23C1060071464A /* LoginServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginServerHandler.swift; sourceTree = "<group>"; };
 		D6B151A32A23C11A0071464A /* PacketParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketParser.swift; sourceTree = "<group>"; };
 		D6B151A52A23C1380071464A /* WorldServerHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldServerHandler.swift; sourceTree = "<group>"; };
@@ -90,6 +92,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		D6059F852A248AD700095D84 /* login */ = {
+			isa = PBXGroup;
+			children = (
+				D6B151A12A23C1060071464A /* LoginServerHandler.swift */,
+				D6059F832A248ABA00095D84 /* LoginViewController.swift */,
+			);
+			path = login;
+			sourceTree = "<group>";
+		};
 		D6B151AE2A23C36B0071464A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -122,6 +133,7 @@
 		D6FB8E2F2A23C02E003A7142 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				D6059F852A248AD700095D84 /* login */,
 				D6FB8E302A23C02E003A7142 /* AppDelegate.swift */,
 				D6FB8E322A23C02E003A7142 /* GameViewController.swift */,
 				D6FB8E342A23C02E003A7142 /* Renderer.swift */,
@@ -130,7 +142,6 @@
 				D6FB8E392A23C030003A7142 /* Assets.xcassets */,
 				D6FB8E3B2A23C030003A7142 /* Main.storyboard */,
 				D6FB8E3E2A23C030003A7142 /* UI.entitlements */,
-				D6B151A12A23C1060071464A /* LoginServerHandler.swift */,
 				D6B151A32A23C11A0071464A /* PacketParser.swift */,
 				D6B151A52A23C1380071464A /* WorldServerHandler.swift */,
 			);
@@ -305,6 +316,7 @@
 				D6B151A42A23C11A0071464A /* PacketParser.swift in Sources */,
 				D6FB8E372A23C02E003A7142 /* Shaders.metal in Sources */,
 				D6FB8E332A23C02E003A7142 /* GameViewController.swift in Sources */,
+				D6059F842A248ABA00095D84 /* LoginViewController.swift in Sources */,
 				D6B151A22A23C1060071464A /* LoginServerHandler.swift in Sources */,
 				D6FB8E352A23C02E003A7142 /* Renderer.swift in Sources */,
 				D6FB8E312A23C02E003A7142 /* AppDelegate.swift in Sources */,
@@ -572,7 +584,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 28AS6B884R;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nenuadrian.UIUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -590,7 +602,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 28AS6B884R;
 				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 10.15;
+				MACOSX_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = nenuadrian.UIUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
